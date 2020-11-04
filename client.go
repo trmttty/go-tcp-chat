@@ -24,7 +24,7 @@ func newClient(conn net.Conn, command chan<- command) *client {
 }
 
 func (c *client) readInput() {
-	c.msg("welcom! plese enter your nickname")
+	c.msg("welcom! please enter your name")
 	reader := bufio.NewReader(c.conn)
 	name, err := reader.ReadString('\n')
 	if err != nil {
