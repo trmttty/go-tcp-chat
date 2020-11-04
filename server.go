@@ -25,7 +25,7 @@ func (s *server) run() {
 	for cmd := range s.commands {
 		switch cmd.id {
 		case NAME:
-			s.nick(cmd.client, cmd.args)
+			s.name(cmd.client, cmd.args)
 		case RENAME:
 			s.rename(cmd.client, cmd.args)
 		case CREATE:
@@ -46,7 +46,7 @@ func (s *server) run() {
 	}
 }
 
-func (s *server) nick(c *client, args []string) {
+func (s *server) name(c *client, args []string) {
 	userName := args[0]
 
 	if _, exists := s.members[userName]; exists {
