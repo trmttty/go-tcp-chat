@@ -37,20 +37,20 @@ Private rooms are only visible to those who have been granted access.
 ```
 /join <room name>
 ```
-- Invite new members to a private room.  
-You need to be in the room you want to invite new members to.
+- Invite a new member to a private room.  
+You need to be in the room you want to invite a new member to.
 ```
-/invite <user name>
+/invite <member name>
 ```
 - List all members in the chat server.  
 ```
 /members
 ```
-- Send messages to the members in the room.
+- Send a message to the all members in the room.
 ```
-/msg <messages>
+/msg <message>
 ```
-- Change your name.
+- Change your registered name
 ```
 /rename <new name>
 ```
