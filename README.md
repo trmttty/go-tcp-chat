@@ -13,17 +13,16 @@ telnet localhost 8888
 ```
 > welcome! please enter your name
 <your name>
-
-then...
-
+```
+```
 > all right, I will call you <your name>
 ```
-- You can view the list of chat rooms with the following command
+- You can view the list of rooms with the following command  
+There are two types of rooms: public and private.  
+Private rooms are only visible to those who have been granted access.
 ```
 /rooms
 ```
-- There are two types of chat rooms: public and private.  
-Private chat rooms are only visible to those who have been granted access.
 ```
 > available public rooms are: general random
 > available private rooms are: project1 project2 
