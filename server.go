@@ -24,23 +24,23 @@ func newServer() *server {
 func (s *server) run() {
 	for cmd := range s.commands {
 		switch cmd.id {
-		case CmdNick:
+		case NAME:
 			s.nick(cmd.client, cmd.args)
-		case CmdRename:
+		case RENAME:
 			s.rename(cmd.client, cmd.args)
-		case CmdCreate:
+		case CREATE:
 			s.create(cmd.client, cmd.args)
-		case CmdJoin:
+		case JOIN:
 			s.join(cmd.client, cmd.args)
-		case CmdInvite:
+		case INVITE:
 			s.invite(cmd.client, cmd.args)
-		case CmdMembers:
+		case MEMBERS:
 			s.listMembers(cmd.client, cmd.args)
-		case CmdRooms:
+		case ROOMS:
 			s.listRooms(cmd.client, cmd.args)
-		case CmdMsg:
+		case MSG:
 			s.msg(cmd.client, cmd.args)
-		case CmdQuit:
+		case QUIT:
 			s.quit(cmd.client, cmd.args)
 		}
 	}
@@ -130,7 +130,7 @@ func (s *server) join(c *client, args []string) {
 
 func (s *server) invite(c *client, args []string) {
 	if c.currentRoom == nil {
-		c.err(errors.New("to invite a member, please enter a room"))
+		c.err(errors.New("to invite members, please enter a room"))
 		return
 	}
 
@@ -175,7 +175,7 @@ func (s *server) listRooms(c *client, args []string) {
 
 func (s *server) msg(c *client, args []string) {
 	if c.currentRoom == nil {
-		c.err(errors.New("you must join the room first"))
+		c.err(errors.New("you must join a room first"))
 		return
 	}
 
@@ -189,7 +189,7 @@ func (s *server) quit(c *client, args []string) {
 
 	delete(s.members, c.name)
 
-	c.msg("sad to see tou go :(")
+	c.msg(fmt.Sprintf("goodbye! %s", c.name))
 	c.conn.Close()
 }
 

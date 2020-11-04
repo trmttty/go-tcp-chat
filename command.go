@@ -3,15 +3,15 @@ package main
 type commandID int
 
 const (
-	CmdNick commandID = iota
-	CmdRename
-	CmdCreate
-	CmdJoin
-	CmdInvite
-	CmdMembers
-	CmdRooms
-	CmdMsg
-	CmdQuit
+	NAME commandID = iota
+	RENAME
+	CREATE
+	JOIN
+	INVITE
+	MEMBERS
+	ROOMS
+	MSG
+	QUIT
 )
 
 type command struct {

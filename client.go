@@ -32,7 +32,7 @@ func (c *client) readInput() {
 	}
 	name = strings.Trim(name, "\r\n")
 	c.commands <- command{
-		id:     CmdNick,
+		id:     NAME,
 		client: c,
 		args:   []string{name},
 	}
@@ -51,49 +51,49 @@ func (c *client) readInput() {
 		switch cmd {
 		case "/rename":
 			c.commands <- command{
-				id:     CmdRename,
+				id:     RENAME,
 				client: c,
 				args:   args,
 			}
 		case "/create":
 			c.commands <- command{
-				id:     CmdCreate,
+				id:     CREATE,
 				client: c,
 				args:   args,
 			}
 		case "/join":
 			c.commands <- command{
-				id:     CmdJoin,
+				id:     JOIN,
 				client: c,
 				args:   args,
 			}
 		case "/invite":
 			c.commands <- command{
-				id:     CmdInvite,
+				id:     INVITE,
 				client: c,
 				args:   args,
 			}
 		case "/members":
 			c.commands <- command{
-				id:     CmdMembers,
+				id:     MEMBERS,
 				client: c,
 				args:   args,
 			}
 		case "/rooms":
 			c.commands <- command{
-				id:     CmdRooms,
+				id:     ROOMS,
 				client: c,
 				args:   args,
 			}
 		case "/msg":
 			c.commands <- command{
-				id:     CmdMsg,
+				id:     MSG,
 				client: c,
 				args:   args,
 			}
 		case "/quit":
 			c.commands <- command{
-				id:     CmdQuit,
+				id:     QUIT,
 				client: c,
 				args:   args,
 			}
