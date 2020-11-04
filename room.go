@@ -4,7 +4,6 @@ type room struct {
 	name    string
 	members map[string]*client
 	private bool
-	// password string
 }
 
 func (r *room) broadcast(sender *client, msg string) {
