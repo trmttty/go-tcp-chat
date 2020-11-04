@@ -18,15 +18,27 @@ type client struct {
 func newClient(conn net.Conn, command chan<- command) *client {
 	return &client{
 		conn:         conn,
-		name:         "anonymous",
 		privateRooms: make(map[string]*room),
 		commands:     command,
 	}
 }
 
 func (c *client) readInput() {
+	c.msg("welcom! plese enter your nickname")
+	reader := bufio.NewReader(c.conn)
+	name, err := reader.ReadString('\n')
+	if err != nil {
+		return
+	}
+	name = strings.Trim(name, "\r\n")
+	c.commands <- command{
+		id:     CmdNick,
+		client: c,
+		args:   []string{name},
+	}
+
 	for {
-		msg, err := bufio.NewReader(c.conn).ReadString('\n')
+		msg, err := reader.ReadString('\n')
 		if err != nil {
 			return
 		}
@@ -37,9 +49,15 @@ func (c *client) readInput() {
 		cmd := strings.TrimSpace(args[0])
 
 		switch cmd {
-		case "/nick":
+		case "/rename":
 			c.commands <- command{
-				id:     CmdNick,
+				id:     CmdRename,
+				client: c,
+				args:   args,
+			}
+		case "/create":
+			c.commands <- command{
+				id:     CmdCreate,
 				client: c,
 				args:   args,
 			}

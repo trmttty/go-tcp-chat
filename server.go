@@ -26,6 +26,10 @@ func (s *server) run() {
 		switch cmd.id {
 		case CmdNick:
 			s.nick(cmd.client, cmd.args)
+		case CmdRename:
+			s.rename(cmd.client, cmd.args)
+		case CmdCreate:
+			s.create(cmd.client, cmd.args)
 		case CmdJoin:
 			s.join(cmd.client, cmd.args)
 		case CmdInvite:
@@ -43,10 +47,10 @@ func (s *server) run() {
 }
 
 func (s *server) nick(c *client, args []string) {
-	userName := args[1]
+	userName := args[0]
 
 	if _, exists := s.members[userName]; exists {
-		c.err(errors.New("username is already taken"))
+		c.err(errors.New("the name is already taken"))
 	} else {
 		s.members[userName] = c
 		c.name = userName
@@ -54,25 +58,60 @@ func (s *server) nick(c *client, args []string) {
 	}
 }
 
-func (s *server) join(c *client, args []string) {
-	roomName := args[1]
+func (s *server) rename(c *client, args []string) {
+	currentName := c.name
+	newName := args[1]
 
+	if _, exists := s.members[newName]; exists {
+		c.err(errors.New("the name is already taken"))
+		return
+	}
+
+	s.members[newName] = c
+	c.name = newName
+	c.msg(fmt.Sprintf("your name was changed from %s to %s", currentName, newName))
+
+	delete(s.members, currentName)
+
+	if c.currentRoom != nil {
+		delete(c.currentRoom.members, currentName)
+		c.currentRoom.members[newName] = c
+		c.currentRoom.broadcast(c, fmt.Sprintf("%s changed name to %s.", currentName, newName))
+	}
+}
+
+func (s *server) create(c *client, args []string) {
+	roomName := args[1]
 	private := false
 	if len(args) == 3 && args[2] == "private" {
 		private = true
 	}
 
+	if _, exists := s.rooms[roomName]; exists {
+		c.err(errors.New("the room already exists"))
+		return
+	}
+
+	r := &room{
+		name:    roomName,
+		members: make(map[string]*client),
+		private: private,
+	}
+	s.rooms[roomName] = r
+
+	if private {
+		c.privateRooms[roomName] = r
+	}
+	c.msg(fmt.Sprintf("%s has been successfully created", r.name))
+}
+
+func (s *server) join(c *client, args []string) {
+	roomName := args[1]
+
 	r, ok := s.rooms[roomName]
 	if !ok {
-		r = &room{
-			name:    roomName,
-			members: make(map[string]*client),
-			private: private,
-		}
-		s.rooms[roomName] = r
-		if private {
-			c.privateRooms[roomName] = r
-		}
+		c.err(errors.New("no such room exists"))
+		return
 	}
 
 	if r.private {
@@ -81,11 +120,8 @@ func (s *server) join(c *client, args []string) {
 			return
 		}
 	}
-
 	r.members[c.name] = c
-
 	s.quitCurrentRoom(c)
-
 	c.currentRoom = r
 
 	r.broadcast(c, fmt.Sprintf("%s has joined the room", c.name))
@@ -150,6 +186,8 @@ func (s *server) quit(c *client, args []string) {
 	log.Printf("client has disconnected: %s", c.conn.RemoteAddr().String())
 
 	s.quitCurrentRoom(c)
+
+	delete(s.members, c.name)
 
 	c.msg("sad to see tou go :(")
 	c.conn.Close()

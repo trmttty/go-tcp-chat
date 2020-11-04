@@ -4,6 +4,8 @@ type commandID int
 
 const (
 	CmdNick commandID = iota
+	CmdRename
+	CmdCreate
 	CmdJoin
 	CmdInvite
 	CmdMembers
