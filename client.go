@@ -8,10 +8,20 @@ import (
 )
 
 type client struct {
-	conn     net.Conn
-	nick     string
-	room     *room
-	commands chan<- command
+	conn         net.Conn
+	name         string
+	currentRoom  *room
+	privateRooms map[string]*room
+	commands     chan<- command
+}
+
+func newClient(conn net.Conn, command chan<- command) *client {
+	return &client{
+		conn:         conn,
+		name:         "anonymous",
+		privateRooms: make(map[string]*room),
+		commands:     command,
+	}
 }
 
 func (c *client) readInput() {
@@ -36,6 +46,18 @@ func (c *client) readInput() {
 		case "/join":
 			c.commands <- command{
 				id:     CmdJoin,
+				client: c,
+				args:   args,
+			}
+		case "/invite":
+			c.commands <- command{
+				id:     CmdInvite,
+				client: c,
+				args:   args,
+			}
+		case "/members":
+			c.commands <- command{
+				id:     CmdMembers,
 				client: c,
 				args:   args,
 			}

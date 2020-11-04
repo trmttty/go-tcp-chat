@@ -1,15 +1,15 @@
 package main
 
-import "net"
-
 type room struct {
 	name    string
-	members map[net.Addr]*client
+	members map[string]*client
+	private bool
+	// password string
 }
 
 func (r *room) broadcast(sender *client, msg string) {
-	for addr, m := range r.members {
-		if addr != sender.conn.RemoteAddr() {
+	for name, m := range r.members {
+		if name != sender.name {
 			m.msg(msg)
 		}
 	}
